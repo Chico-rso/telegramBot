@@ -1,6 +1,7 @@
 // когда пользователь пишет слово "рубай" в чате, бот отвечает "привет"
 const {Telegraf} = require('telegraf');
-const bot = new Telegraf('5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk');
+const bot = new Telegraf('5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64');
+
 bot.start((ctx) => ctx.reply('Привет!'));
 
 bot.on('sticker', (ctx) =>
