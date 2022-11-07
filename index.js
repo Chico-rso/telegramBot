@@ -1,7 +1,7 @@
 // когда пользователь пишет слово "рубай" в чате, бот отвечает "привет"
 const {Telegraf} = require('telegraf');
 const bot = new Telegraf('5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64');
-
+//5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk- тестовый бот
 bot.start((ctx) => ctx.reply('Привет!'));
 
 bot.on('sticker', (ctx) =>
@@ -14,9 +14,9 @@ bot.on('sticker', (ctx) =>
 
 bot.on('voice', (ctx) =>
 {
-	if (ctx.message.voice.duration > 15)
+	if (ctx.message.voice.duration > 3)
 	{
-		ctx.reply(`ну пездуза ${ctx.message.voice.duration} секунд`);
+		ctx.reply(`ну пездуза ${ctx.message.voice.duration} сек слушать это, ${ctx.message.from.first_name} не делай так больше, это последнее предупреждение`);
 	}
 });
 bot.on('message', (ctx) =>
