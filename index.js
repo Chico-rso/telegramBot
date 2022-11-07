@@ -16,7 +16,7 @@ bot.on('voice', (ctx) =>
 {
 	if (ctx.message.voice.duration > 15)
 	{
-		ctx.reply("за такие длинные голосовые будешь гореть в аду");
+		ctx.reply(`ну пездуза ${ctx.message.voice.duration} секунд`);
 	}
 });
 bot.on('message', (ctx) =>
