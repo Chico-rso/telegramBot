@@ -1,6 +1,7 @@
 // когда пользователь пишет слово "рубай" в чате, бот отвечает "привет"
 const {Telegraf} = require('telegraf');
 const bot = new Telegraf('5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64');
+// 5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64
 //5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk- тестовый бот
 bot.start((ctx) => ctx.reply('Привет!'));
 
@@ -22,6 +23,7 @@ bot.on('voice', (ctx) =>
 bot.on('message', (ctx) =>
 {
 	hendler(ctx);
+	sendYou(ctx);
 })
 
 async function hendler(ctx)
@@ -33,6 +35,13 @@ async function hendler(ctx)
 	else if (includesRub(ctx.message.text || ""))
 	{
 		await ctx.reply(`https://picsum.photos/id/${randomInteger(1, 300)}/400/500`);
+	}
+}
+async function sendYou(ctx)
+{
+	if(ctx.message.text == 'иди на хуй' || ctx.message.text == 'иди нахуй' || ctx.message.text == 'пошел на хуй' || ctx.message.text == 'пошел нахуй' || ctx.message.text == 'нахуй иди' || ctx.message.text == 'на хуй иди')
+	{
+		await ctx.reply('сам иди на хуй');
 	}
 }
 
