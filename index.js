@@ -14,7 +14,7 @@ bot.on('sticker', (ctx) =>
 
 bot.on('voice', (ctx) =>
 {
-	if (ctx.message.voice.duration > 3)
+	if (ctx.message.voice.duration > 15)
 	{
 		ctx.reply(`ну пездуза ${ctx.message.voice.duration} сек слушать это, ${ctx.message.from.first_name} не делай так больше, это последнее предупреждение`);
 	}
