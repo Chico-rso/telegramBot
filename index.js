@@ -1,8 +1,8 @@
 // когда пользователь пишет слово "рубай" в чате, бот отвечает "привет"
 const {Telegraf} = require('telegraf');
-const bot = new Telegraf('5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64');
+const bot = new Telegraf('5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk');
 // 5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64
-//5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk- тестовый бот
+//5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk - тестовый бот
 bot.start((ctx) => ctx.reply('Привет!'));
 
 bot.on('sticker', (ctx) =>
@@ -30,7 +30,7 @@ async function hendler(ctx)
 {
 	if (includesStrigoi(ctx.message.text))
 	{
-		await ctx.reply('))))');
+		await ctx.telegram.sendPhoto(ctx.message.chat.id, {source: 'strigoi.jpg'});
 	}
 	else if (includesRub(ctx.message.text || ""))
 	{
@@ -39,11 +39,9 @@ async function hendler(ctx)
 }
 async function sendYou(ctx)
 {
-	if(ctx.message.text == 'иди на хуй' || ctx.message.text == 'иди нахуй' || ctx.message.text == 'пошел на хуй' || ctx.message.text == 'пошел нахуй' || ctx.message.text == 'нахуй иди' || ctx.message.text == 'на хуй иди')
-	{
-		await ctx.reply('сам иди на хуй');
-	}
+	arrXu.includes(ctx.message.text) ? await ctx.reply('сам иди на хуй') : null;
 }
+let arrXu = ['иди на хуй', 'иди нахуй', 'пошел на хуй', 'пошел нахуй', 'нахуй иди', 'на хуй иди', 'пошёл нахуй', 'пошёл на хуй', 'нахуй пошёл', 'на хуй пошёл'];
 
 function randomInteger(min, max)
 {
