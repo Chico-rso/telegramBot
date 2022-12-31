@@ -31,7 +31,8 @@ const strigoi = ["strigoi", "стригой", "стриг", "strig", "стриг
 const rubai = ['рубай', 'рубай.', 'рубай,', "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.", "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"];
 function checkRubai(ctx)
 {
-	if (rubai.includes(ctx.message.text))
+	const message = ctx.update.message;
+	if (message.text && rubai.some((word) => message.text.includes(word)))
 	{
 		ctx.telegram.sendAudio(ctx.message.chat.id, {source: "strigoi.mp3"}, {reply_to_message_id: ctx.message.message_id});
 	}
@@ -40,6 +41,7 @@ bot.on("message", (ctx) =>
 {
 	sendYou(ctx);
 	checkRubai(ctx);
+	
 	const message = ctx.update.message;
 	// check if the message text contains "strigoi"
 	if (message.text && strigoi.some((word) => message.text.toLowerCase().includes(word)))
