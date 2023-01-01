@@ -55,13 +55,20 @@ bot.on("message", (ctx) =>
 // function to send the New Year's greeting
 function sendMessage()
 {
-	bot.telegram.sendMessage(-1001695052259, "С новым годом Pediki, люблю вас и обнимаю до хруста! 🎉🎊🎈");
+	bot.telegram.sendMessage(-1001695052259, "О, с новым годом пацаны!!! 🎉🎊🎈");
 }
+// Schedule the sendMessage function to run every day at 00:00
+const now = new Date();
 
-// schedule the message to be sent at 00:01 on 1.1.23
-const targetDate = new Date("01/01/23 00:01:00");
-const timeUntilTargetDate = targetDate - Date.now();
-setTimeout(sendMessage, timeUntilTargetDate);
+// Calculate the time until midnight
+const timeUntilMidnight = (24 - now.getHours()) * 60 * 60 * 1000 + (60 - now.getMinutes()) * 60 * 1000 + (60 - now.getSeconds()) * 1000;
+
+// Schedule the sendMessage function to run at midnight
+setTimeout(() => {
+  setInterval(sendMessage, 24 * 60 * 60 * 1000);
+}, timeUntilMidnight);
+
+
 
 async function getWeather(location, ctx)
 {
