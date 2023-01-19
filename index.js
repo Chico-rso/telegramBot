@@ -1,9 +1,10 @@
 // когда пользователь пишет слово "рубай" в чате, бот отвечает "привет"
-const {Telegraf} = require("telegraf");
+const { Telegraf } = require("telegraf");
 const axios = require("axios");
 const bot = new Telegraf("5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64");
 // 5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64
 //5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk - тестовый бот
+//5970563248:AAEM-Exx2s7Et1ifpZEqGQf6DyiJAnzA7sM - strigoiMusicBot
 // 315793010 - id моего аккаунта
 
 const API_KEY = "a1a5763c6ce3ed3ae0df7930f0d187b2";
@@ -27,30 +28,33 @@ bot.on("sticker", (ctx) =>
 		ctx.reply("👌");
 	}
 });
-const strigoi = ["strigoi", "стригой", "стриг", "strig", "стригой", "sстригой", "сtригой", "stригой", "cTrigoi", "cтригой", "стrигой", "стригoй", "стрNгой", "стриrой"];
-const rubai = ['рубай', 'рубай.', 'рубай,', "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.", "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"];
-function checkRubai(ctx)
-{
-	const message = ctx.update.message;
-	if (message.text && rubai.some((word) => message.text.includes(word)))
-	{
-		ctx.telegram.sendAudio(ctx.message.chat.id, {source: "strigoi.mp3"}, {reply_to_message_id: ctx.message.message_id});
-	}
-}
 bot.on("message", (ctx) =>
 {
 	sendYou(ctx);
 	checkRubai(ctx);
-	
+	checkMessageFromUser(ctx);
+
 	const message = ctx.update.message;
 	// check if the message text contains "strigoi"
 	if (message.text && strigoi.some((word) => message.text.toLowerCase().includes(word)))
 	{
 		// send a photo to the user
-		ctx.replyWithPhoto({source: "strigoi.jpg"}, {reply_to_message_id: ctx.message.message_id});
+		ctx.replyWithPhoto({ source: "strigoi.jpg" }, { reply_to_message_id: ctx.message.message_id });
 	}
 });
 
+const strigoi = ["strigoi", "стригой", "стриг", "strig", "стригой", "sстригой", "сtригой", "stригой", "cTrigoi", "cтригой", "стrигой", "стригoй", "стрNгой", "стриrой"];
+const rubai = ['рубай', 'рубай.', 'рубай,', "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.", "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"];
+let arrXu = ["иди на хуй", "иди нахуй", "пошел на хуй", "пошел нахуй", "нахуй иди", "на хуй иди", "пошёл нахуй", "пошёл на хуй", "нахуй пошёл", "на хуй пошёл"];
+
+function checkRubai(ctx)
+{
+	const message = ctx.update.message;
+	if (message.text && rubai.some((word) => message.text.includes(word)))
+	{
+		ctx.telegram.sendAudio(ctx.message.chat.id, { source: "strigoi.mp3" }, { reply_to_message_id: ctx.message.message_id });
+	}
+}
 
 // function to send the New Year's greeting
 function sendMessage()
@@ -64,8 +68,9 @@ const now = new Date();
 const timeUntilMidnight = (24 - now.getHours()) * 60 * 60 * 1000 + (60 - now.getMinutes()) * 60 * 1000 + (60 - now.getSeconds()) * 1000;
 
 // Schedule the sendMessage function to run at midnight
-setTimeout(() => {
-  setInterval(sendMessage, 24 * 60 * 60 * 1000);
+setTimeout(() =>
+{
+	setInterval(sendMessage, 24 * 60 * 60 * 1000);
 }, timeUntilMidnight);
 
 
@@ -96,12 +101,23 @@ async function sendYou(ctx)
 {
 	if (arrXu.includes(ctx.message.text))
 	{
-		await ctx.reply("сам иди на хуй", {reply_to_message_id: ctx.message.message_id});
+		await ctx.reply("сам иди на хуй", { reply_to_message_id: ctx.message.message_id });
 	}
 }
 
-let arrXu = ["иди на хуй", "иди нахуй", "пошел на хуй", "пошел нахуй", "нахуй иди", "на хуй иди", "пошёл нахуй", "пошёл на хуй", "нахуй пошёл", "на хуй пошёл"];
 
+async function checkMessageFromUser(ctx)
+{
+	const message = ctx.update.message;
+	if(message.forward_from_chat)
+	{
+		if(message.forward_from_chat.id === -1001607140386)
+		{
+			ctx.telegram.deleteMessage(message.chat.id, message.message_id);
+			ctx.reply("This message has been deleted due to spreading fake information. SIRENA BAD!");
+		}
+	}
+}
 
 bot.launch();
 
