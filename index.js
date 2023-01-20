@@ -33,6 +33,7 @@ bot.on("message", (ctx) =>
 	sendYou(ctx);
 	checkRubai(ctx);
 	checkMessageFromUser(ctx);
+	checkMessageFromRubai(ctx);
 
 	const message = ctx.update.message;
 	// check if the message text contains "strigoi"
@@ -46,6 +47,7 @@ bot.on("message", (ctx) =>
 const strigoi = ["strigoi", "стригой", "стриг", "strig", "стригой", "sстригой", "сtригой", "stригой", "cTrigoi", "cтригой", "стrигой", "стригoй", "стрNгой", "стриrой"];
 const rubai = ['рубай', 'рубай.', 'рубай,', "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.", "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"];
 let arrXu = ["иди на хуй", "иди нахуй", "пошел на хуй", "пошел нахуй", "нахуй иди", "на хуй иди", "пошёл нахуй", "пошёл на хуй", "нахуй пошёл", "на хуй пошёл"];
+const sirena = ['@news_sirena', '@sirenanews_bot'];
 
 function checkRubai(ctx)
 {
@@ -116,6 +118,16 @@ async function checkMessageFromUser(ctx)
 			ctx.telegram.deleteMessage(message.chat.id, message.message_id);
 			ctx.reply("This message has been deleted due to spreading fake information. SIRENA BAD!");
 		}
+	}
+}
+
+async function checkMessageFromRubai(ctx)
+{
+	let message = ctx.update.message;
+	if(message.text && sirena.some((word) => message.text.includes(word)))
+	{
+		ctx.telegram.deleteMessage(message.chat.id, message.message_id);
+		ctx.reply("This message has been deleted due to spreading fake information. SIRENA BAD!");
 	}
 }
 
