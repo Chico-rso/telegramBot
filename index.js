@@ -111,7 +111,7 @@ async function checkMessageFromUser(ctx)
 	const message = ctx.update.message;
 	if(message.forward_from_chat)
 	{
-		if(message.forward_from_chat.id === -1001607140386 || 2067105006)
+		if(message.forward_from_chat.id === -1001607140386)
 		{
 			ctx.telegram.deleteMessage(message.chat.id, message.message_id);
 			ctx.reply("This message has been deleted due to spreading fake information. SIRENA BAD!");
