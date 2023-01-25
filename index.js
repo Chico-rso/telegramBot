@@ -31,6 +31,7 @@ bot.on("sticker", (ctx) =>
 bot.on("message", (ctx) =>
 {
 	sendYou(ctx);
+	checkMessageDziba(ctx);
 	// checkRubai(ctx);
 	// checkMessageFromUser(ctx);
 	// checkMessageFromRubai(ctx);
@@ -46,8 +47,10 @@ bot.on("message", (ctx) =>
 
 const strigoi = ["strigoi", "стригой", "стриг", "strig", "стригой", "sстригой", "сtригой", "stригой", "cTrigoi", "cтригой", "стrигой", "стригoй", "стрNгой", "стриrой"];
 const rubai = ['рубай', 'рубай.', 'рубай,', "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.", "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"];
-let arrXu = ["иди на хуй", "иди нахуй", "пошел на хуй", "пошел нахуй", "нахуй иди", "на хуй иди", "пошёл нахуй", "пошёл на хуй", "нахуй пошёл", "на хуй пошёл", "хуй"];
+const arrXu = ["иди на хуй", "иди нахуй", "пошел на хуй", "пошел нахуй", "нахуй иди", "на хуй иди", "пошёл нахуй", "пошёл на хуй", "нахуй пошёл", "на хуй пошёл", "хуй"];
 const sirena = ['@news_sirena', '@sirenanews_bot'];
+const dziba = ['дзыб','дзеб',"цепан","ципан","дзиб","ципа","Дзэб"]
+
 
 function checkRubai(ctx)
 {
@@ -107,6 +110,19 @@ async function sendYou(ctx)
 	if (arrXu.includes(message))
 	{
 		await ctx.reply("сам иди на хуй", { reply_to_message_id: ctx.message.message_id });
+	}
+}
+
+async function checkMessageDziba(ctx)
+{
+	let message = ctx.update.message;
+	message = message.text.toLowerCase();
+	message = message.replace(/\s/g, '');
+
+	if (dziba.some((word) => message.includes(word)))
+	{
+		await ctx.replyWithPhoto({source: "dziba.jpg" }, { reply_to_message_id: ctx.message.message_id });
+		await ctx.reply("Военкор Дзэбоев на месте. Путин наш президент, враг будет разгромлен, Народ обоссан", { reply_to_message_id: ctx.message.message_id });
 	}
 }
 
