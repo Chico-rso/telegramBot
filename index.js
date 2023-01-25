@@ -1,7 +1,7 @@
 // когда пользователь пишет слово "рубай" в чате, бот отвечает "привет"
 const { Telegraf } = require("telegraf");
 const axios = require("axios");
-const bot = new Telegraf("5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk");
+const bot = new Telegraf("5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64");
 // 5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64
 //5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk - тестовый бот
 //5970563248:AAEM-Exx2s7Et1ifpZEqGQf6DyiJAnzA7sM - strigoiMusicBot
