@@ -1,7 +1,7 @@
 // когда пользователь пишет слово "рубай" в чате, бот отвечает "привет"
 const { Telegraf } = require("telegraf");
 const axios = require("axios");
-const bot = new Telegraf("5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64");
+const bot = new Telegraf("5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk");
 // 5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64
 //5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk - тестовый бот
 //5970563248:AAEM-Exx2s7Et1ifpZEqGQf6DyiJAnzA7sM - strigoiMusicBot
@@ -31,12 +31,14 @@ bot.on("sticker", (ctx) =>
 bot.on("message", (ctx) =>
 {
 	sendYou(ctx);
-	checkRubai(ctx);
-	checkMessageFromUser(ctx);
-	checkMessageFromRubai(ctx);
+	// checkRubai(ctx);
+	// checkMessageFromUser(ctx);
+	// checkMessageFromRubai(ctx);
 
 	const message = ctx.update.message;
 	// check if the message text contains "strigoi"
+	message.text.trim();
+	message = message.toLowerCase();
 	if (message.text && strigoi.some((word) => message.text.toLowerCase().includes(word)))
 	{
 		// send a photo to the user
@@ -46,7 +48,7 @@ bot.on("message", (ctx) =>
 
 const strigoi = ["strigoi", "стригой", "стриг", "strig", "стригой", "sстригой", "сtригой", "stригой", "cTrigoi", "cтригой", "стrигой", "стригoй", "стрNгой", "стриrой"];
 const rubai = ['рубай', 'рубай.', 'рубай,', "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.", "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"];
-let arrXu = ["иди на хуй", "иди нахуй", "пошел на хуй", "пошел нахуй", "нахуй иди", "на хуй иди", "пошёл нахуй", "пошёл на хуй", "нахуй пошёл", "на хуй пошёл"];
+let arrXu = ["иди на хуй", "иди нахуй", "пошел на хуй", "пошел нахуй", "нахуй иди", "на хуй иди", "пошёл нахуй", "пошёл на хуй", "нахуй пошёл", "на хуй пошёл", "хуй"];
 const sirena = ['@news_sirena', '@sirenanews_bot'];
 
 function checkRubai(ctx)
@@ -101,7 +103,10 @@ async function getWeather(location, ctx)
 
 async function sendYou(ctx)
 {
-	if (arrXu.includes(ctx.message.text))
+	let message = ctx.message.text;
+	message.trim();
+	message = message.toLowerCase();
+	if (arrXu.includes(message))
 	{
 		await ctx.reply("сам иди на хуй", { reply_to_message_id: ctx.message.message_id });
 	}
