@@ -37,9 +37,7 @@ bot.on("message", (ctx) =>
 
 	const message = ctx.update.message;
 	// check if the message text contains "strigoi"
-	message.text.trim();
-	message = message.toLowerCase();
-	if (message.text && strigoi.some((word) => message.text.toLowerCase().includes(word)))
+	if (message.text.toLowerCase().trim() && strigoi.some((word) => message.text.toLowerCase().trim().includes(word)))
 	{
 		// send a photo to the user
 		ctx.replyWithPhoto({ source: "strigoi.jpg" }, { reply_to_message_id: ctx.message.message_id });
