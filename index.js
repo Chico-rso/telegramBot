@@ -94,7 +94,18 @@ async function getWeather(location, ctx)
 		// send the forecast to the user
 		ctx.reply(`🌤️ *The weather in ${location}*:
 						*Forecast:* ${forecast}
-						*Temperature:* ${temperature}°C`);
+						*Temperature:* ${temperature}°C
+						*Humidity:* ${data.main.humidity}%
+						*Wind speed:* ${data.wind.speed} m/s
+						*Cloudiness:* ${data.clouds.all}%
+						*Pressure:* ${data.main.pressure} hPa
+						*Coordinates:* ${data.coord.lat}, ${data.coord.lon}
+						*Sunrise:* ${new Date(data.sys.sunrise * 1000).toLocaleTimeString()}
+						*Sunset:* ${new Date(data.sys.sunset * 1000).toLocaleTimeString()}
+						*Timezone:* ${data.timezone / 3600} hours
+						*Country:* ${data.sys.country}
+						*City:* ${data.name}
+						`, { parse_mode: "Markdown" });
 	}
 	catch (error)
 	{
@@ -105,9 +116,7 @@ async function getWeather(location, ctx)
 async function sendYou(ctx)
 {
 	let message = ctx.message.text;
-	message.trim();
-	message = message.toLowerCase();
-	if (arrXu.includes(message))
+	if (arrXu.includes(message.toLowerCase().trim()))
 	{
 		await ctx.reply("сам иди на хуй", { reply_to_message_id: ctx.message.message_id });
 	}
@@ -115,14 +124,14 @@ async function sendYou(ctx)
 
 async function checkMessageDziba(ctx)
 {
-	let message = ctx.update.message;
-	message = message.text.toLowerCase();
-	message = message.replace(/\s/g, '');
+	let message = ctx.update.message.text;
+	// убрать точки и запятые и пробелы и привести к нижнему регистру и проверить на наличие слова
+	message = message.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "").replace(/\s/g, "").toLowerCase();
 
 	if (dziba.some((word) => message.includes(word)))
 	{
 		await ctx.replyWithPhoto({source: "dziba.jpg" }, { reply_to_message_id: ctx.message.message_id });
-		await ctx.reply("Военкор Дзэбоев на месте. Путин наш президент, враг будет разгромлен, Народ обоссан", { reply_to_message_id: ctx.message.message_id });
+		await ctx.reply("Военкор Дзэбоев на месте.", { reply_to_message_id: ctx.message.message_id });
 	}
 }
 
@@ -151,10 +160,3 @@ async function checkMessageFromRubai(ctx)
 }
 
 bot.launch();
-
-
-
-
-
-
-
