@@ -62,9 +62,9 @@ function checkRubai(ctx)
 }
 
 // function to send the New Year's greeting
-function sendMessage()
+async function sendMessage()
 {
-	bot.telegram.sendMessage(-1001695052259, "О, с новым годом пацаны!!! 🎉🎊🎈");
+	await bot.telegram.sendMessage(-1001695052259, "О, с новым годом пацаны!!! 🎉🎊🎈");
 }
 // Schedule the sendMessage function to run every day at 00:00
 const now = new Date();
@@ -116,7 +116,8 @@ async function getWeather(location, ctx)
 async function sendYou(ctx)
 {
 	let message = ctx.message.text;
-	if (arrXu.includes(message.toLowerCase().trim()))
+	message = message.replace(/[.,-\/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s/g, "").toLowerCase();
+	if (arrXu.includes(message))
 	{
 		await ctx.reply("сам иди на хуй", { reply_to_message_id: ctx.message.message_id });
 	}
@@ -126,7 +127,7 @@ async function checkMessageDziba(ctx)
 {
 	let message = ctx.update.message.text;
 	// убрать точки и запятые и пробелы и привести к нижнему регистру и проверить на наличие слова
-	message = message.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "").replace(/\s/g, "").toLowerCase();
+	message = message.replace(/[.,-\/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s/g, "").toLowerCase();
 
 	if (dziba.some((word) => message.includes(word)))
 	{
@@ -143,7 +144,7 @@ async function checkMessageFromUser(ctx)
 	{
 		if(message.forward_from_chat.id === -1001607140386)
 		{
-			ctx.telegram.deleteMessage(message.chat.id, message.message_id);
+			await ctx.telegram.deleteMessage(message.chat.id, message.message_id);
 			ctx.reply("This message has been deleted due to spreading fake information. SIRENA BAD!");
 		}
 	}
