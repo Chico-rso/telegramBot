@@ -31,17 +31,10 @@ bot.on("message", (ctx) =>
 {
 	sendYou(ctx);
 	checkMessageDziba(ctx);
+	checkMessageStrigoi(ctx);
 	// checkRubai(ctx);
 	// checkMessageFromUser(ctx);
 	// checkMessageFromRubai(ctx);
-
-	const message = ctx.update.message;
-	// check if the message text contains "strigoi"
-	if (message.text.toLowerCase().trim() && strigoi.some((word) => message.text.toLowerCase().trim().includes(word)))
-	{
-		// send a photo to the user
-		ctx.replyWithPhoto({ source: "strigoi.jpg" }, { reply_to_message_id: ctx.message.message_id });
-	}
 });
 
 const strigoi = ["strigoi", "стригой", "стриг", "strig", "стригой", "sстригой", "сtригой", "stригой", "cTrigoi", "cтригой", "стrигой", "стригoй", "стрNгой", "стриrой"];
@@ -51,14 +44,7 @@ const sirena = ['@news_sirena', '@sirenanews_bot'];
 const dziba = ['дзыб','дзеб',"цепан","ципан","дзиб","ципа","Дзэб"]
 
 
-async function checkRubai(ctx)
-{
-	const message = ctx.update.message;
-	if (message.text && rubai.some((word) => message.text.includes(word)))
-	{
-		await ctx.telegram.sendAudio(ctx.message.chat.id, {source: "strigoi.mp3"}, {reply_to_message_id: ctx.message.message_id});
-	}
-}
+
 
 // function to send the New Year's greeting
 async function sendMessage()
@@ -115,8 +101,8 @@ async function getWeather(location, ctx)
 async function sendYou(ctx)
 {
 	let message = ctx.message.text;
-	message = message.replace(/[.,-\/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s/g, "").toLowerCase();
-	if (arrXu.includes(message))
+	let newMessage = message.replace(/[.,-/#!$%^&*;:{}=-_`~()\s]/g, "").toLowerCase();
+	if (arrXu.includes(newMessage))
 	{
 		await ctx.reply("сам иди на хуй", { reply_to_message_id: ctx.message.message_id });
 	}
@@ -126,37 +112,59 @@ async function checkMessageDziba(ctx)
 {
 	let message = ctx.update.message.text;
 	// убрать точки и запятые и пробелы и привести к нижнему регистру и проверить на наличие слова
-	message = message.replace(/[.,-\/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s/g, "").toLowerCase();
+	let newMessage = message.replace(/[.,-/#!$%^&*;:{}=-_`~()\s]/g, "").toLowerCase();
 
-	if (dziba.some((word) => message.includes(word)))
+	if (dziba.some((word) => newMessage.includes(word)))
 	{
 		await ctx.replyWithPhoto({source: "dziba.jpg" }, { reply_to_message_id: ctx.message.message_id });
 		await ctx.reply("Военкор Дзэбоев на месте.", { reply_to_message_id: ctx.message.message_id });
 	}
 }
 
-
-async function checkMessageFromUser(ctx)
+async function checkMessageStrigoi(ctx)
 {
-	const message = ctx.update.message;
-	if(message.forward_from_chat)
+	let message = ctx.update.message.text;
+	let newMessage = message.replace(/[.,-/#!$%^&*;:{}=-_`~()\s]/g, "").toLowerCase();
+
+	if (strigoi.some((word) => newMessage.includes(word)))
 	{
-		if(message.forward_from_chat.id === -1001607140386)
-		{
-			await ctx.telegram.deleteMessage(message.chat.id, message.message_id);
-			ctx.reply("This message has been deleted due to spreading fake information. SIRENA BAD!");
-		}
+		// send a photo to the user
+		await ctx.replyWithPhoto({ source: "strigoi.jpg" }, { reply_to_message_id: ctx.message.message_id });
 	}
 }
 
-async function checkMessageFromRubai(ctx)
-{
-	let message = ctx.update.message;
-	if(message.text && sirena.some((word) => message.text.includes(word)))
-	{
-		await ctx.telegram.deleteMessage(message.chat.id, message.message_id);
-		ctx.reply("This message has been deleted due to spreading fake information. SIRENA BAD!");
-	}
-}
+
+// async function checkMessageFromUser(ctx)
+// {
+// 	const message = ctx.update.message;
+// 	if(message.forward_from_chat)
+// 	{
+// 		if(message.forward_from_chat.id === -1001607140386)
+// 		{
+// 			await ctx.telegram.deleteMessage(message.chat.id, message.message_id);
+// 			ctx.reply("This message has been deleted due to spreading fake information. SIRENA BAD!");
+// 		}
+// 	}
+// }
+
+// async function checkMessageFromRubai(ctx)
+// {
+// 	let message = ctx.update.message;
+// 	if(message.text && sirena.some((word) => message.text.includes(word)))
+// 	{
+// 		await ctx.telegram.deleteMessage(message.chat.id, message.message_id);
+// 		ctx.reply("This message has been deleted due to spreading fake information. SIRENA BAD!");
+// 	}
+// }
+
+// async function checkRubai(ctx)
+// {
+// 	const message = ctx.update.message;
+// 	if (message.text && rubai.some((word) => message.text.includes(word)))
+// 	{
+// 		await ctx.telegram.sendAudio(ctx.message.chat.id, {source: "strigoi.mp3"}, {reply_to_message_id: ctx.message.message_id});
+// 	}
+// }
+
 
 bot.launch();
