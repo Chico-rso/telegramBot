@@ -1,4 +1,3 @@
-// когда пользователь пишет слово "рубай" в чате, бот отвечает "привет"
 const { Telegraf } = require("telegraf");
 const axios = require("axios");
 const bot = new Telegraf("5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64");
@@ -52,12 +51,12 @@ const sirena = ['@news_sirena', '@sirenanews_bot'];
 const dziba = ['дзыб','дзеб',"цепан","ципан","дзиб","ципа","Дзэб"]
 
 
-function checkRubai(ctx)
+async function checkRubai(ctx)
 {
 	const message = ctx.update.message;
 	if (message.text && rubai.some((word) => message.text.includes(word)))
 	{
-		ctx.telegram.sendAudio(ctx.message.chat.id, { source: "strigoi.mp3" }, { reply_to_message_id: ctx.message.message_id });
+		await ctx.telegram.sendAudio(ctx.message.chat.id, {source: "strigoi.mp3"}, {reply_to_message_id: ctx.message.message_id});
 	}
 }
 
@@ -155,7 +154,7 @@ async function checkMessageFromRubai(ctx)
 	let message = ctx.update.message;
 	if(message.text && sirena.some((word) => message.text.includes(word)))
 	{
-		ctx.telegram.deleteMessage(message.chat.id, message.message_id);
+		await ctx.telegram.deleteMessage(message.chat.id, message.message_id);
 		ctx.reply("This message has been deleted due to spreading fake information. SIRENA BAD!");
 	}
 }
