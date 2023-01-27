@@ -32,9 +32,6 @@ bot.on("message", (ctx) =>
 	sendYou(ctx);
 	checkMessageDziba(ctx);
 	checkMessageStrigoi(ctx);
-	// checkRubai(ctx);
-	// checkMessageFromUser(ctx);
-	// checkMessageFromRubai(ctx);
 });
 
 const strigoi = ["strigoi", "стригой", "стриг", "strig", "стригой", "sстригой", "сtригой", "stригой", "cTrigoi", "cтригой", "стrигой", "стригoй", "стрNгой", "стриrой"];
@@ -101,6 +98,7 @@ async function getWeather(location, ctx)
 async function sendYou(ctx)
 {
 	let message = ctx.message.text;
+	if(!message) return;
 	let newMessage = message.replace(/[.,-/#!$%^&*;:{}=-_`~()\s]/g, "").toLowerCase();
 	if (arrXu.includes(newMessage))
 	{
@@ -110,26 +108,34 @@ async function sendYou(ctx)
 
 async function checkMessageDziba(ctx)
 {
-	let message = ctx.update.message.text;
-	// убрать точки и запятые и пробелы и привести к нижнему регистру и проверить на наличие слова
-	let newMessage = message.replace(/[.,-/#!$%^&*;:{}=-_`~()\s]/g, "").toLowerCase();
-
-	if (dziba.some((word) => newMessage.includes(word)))
+	try
 	{
-		await ctx.replyWithPhoto({source: "dziba.jpg" }, { reply_to_message_id: ctx.message.message_id });
-		await ctx.reply("Военкор Дзэбоев на месте.", { reply_to_message_id: ctx.message.message_id });
+		let message = ctx.update.message.text;
+		if (!message)
+		{
+			return;
+		}
+		let newMessage = message.replace(/[.,-/#!$%^&*;:{}=-_`~()\s]/g, "").toLowerCase();
+		if (dziba.some((word) => newMessage.includes(word)))
+		{
+			await ctx.replyWithPhoto({source: "dziba.jpg"}, {reply_to_message_id: ctx.message.message_id});
+			await ctx.reply("Военкор Дзэбоев на месте.", {reply_to_message_id: ctx.message.message_id});
+		}
+	}
+	catch (error)
+	{
+		console.error(error);
 	}
 }
 
 async function checkMessageStrigoi(ctx)
 {
+	if (!ctx.update.message || !ctx.update.message.text) return;
 	let message = ctx.update.message.text;
 	let newMessage = message.replace(/[.,-/#!$%^&*;:{}=-_`~()\s]/g, "").toLowerCase();
-
 	if (strigoi.some((word) => newMessage.includes(word)))
 	{
-		// send a photo to the user
-		await ctx.replyWithPhoto({ source: "strigoi.jpg" }, { reply_to_message_id: ctx.message.message_id });
+		await ctx.replyWithPhoto({source: "strigoi.jpg"}, {reply_to_message_id: ctx.message.message_id});
 	}
 }
 
