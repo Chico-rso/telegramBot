@@ -3,7 +3,16 @@
 //5970563248:AAEM-Exx2s7Et1ifpZEqGQf6DyiJAnzA7sM - strigoiMusicBot
 // 315793010 - id моего аккаунта
 
-import {getWeather, checkMessageDziba, checkMessageStrigoi, answerChatGpt, sendYou, getMotivationalQuote} from "./modules/index.js";
+import {
+	getWeather,
+	checkMessageDziba,
+	checkMessageStrigoi,
+	answerChatGpt,
+	sendYou,
+	getMotivationalQuote,
+	getInterestingFact,
+	getRandomGif
+} from "./modules/index.js";
 import {Telegraf} from "telegraf";
 
 const bot = new Telegraf("5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk");
@@ -17,6 +26,28 @@ bot.command("weather", (ctx) =>
 {
 	const location = "Vladikavkaz";
 	getWeather(location, ctx);
+});
+
+bot.command('fact', async (ctx) => {
+  try {
+    const fact = await getInterestingFact();
+    ctx.reply(fact);
+  } catch (error) {
+    console.error(error);
+    ctx.reply('Произошла ошибка, попробуйте еще раз позднее');
+  }
+});
+
+bot.command('gif', async (ctx) => {
+  try {
+    const query = ctx.message.text.split(' ').slice(1).join(' ');
+    const gifUrl = await getRandomGif(query);
+
+    ctx.replyWithAnimation({ url: gifUrl });
+  } catch (error) {
+    console.error(error);
+    ctx.reply('Произошла ошибка, попробуйте еще раз позднее');
+  }
 });
 
 bot.command("quote", async (ctx) =>
