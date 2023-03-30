@@ -1,9 +1,12 @@
 import axios from "axios";
+import dotenv from "dotenv";
 
-const WETHER_API_KEY = "a1a5763c6ce3ed3ae0df7930f0d187b2";
+dotenv.config();
+
+const apiKey = process.env.WETHER_API_KEY;
 export async function getWeather(location, ctx)
 {
-	const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${WETHER_API_KEY}`;
+	const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}`;
 	try
 	{
 		const response = await axios.get(url);
@@ -33,3 +36,4 @@ export async function getWeather(location, ctx)
 		console.error(error);
 	}
 }
+

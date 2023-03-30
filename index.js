@@ -1,53 +1,64 @@
-// 5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64
-//5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk - тестовый бот
-//5970563248:AAEM-Exx2s7Et1ifpZEqGQf6DyiJAnzA7sM - strigoiMusicBot
 // 315793010 - id моего аккаунта
-
 import {
 	getWeather,
 	checkMessageDziba,
 	checkMessageStrigoi,
-	answerChatGpt,
+	// answerChatGpt,
 	sendYou,
 	getMotivationalQuote,
 	getInterestingFact,
-	getRandomGif
+	getRandomGif,
 } from "./modules/index.js";
-import {Telegraf} from "telegraf";
 
-const bot = new Telegraf("5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk");
+import {Telegraf} from "telegraf";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const testApiKey = process.env.TEST_BOT_API;
+
+const bot = new Telegraf(testApiKey);
 bot.start((ctx) => ctx.reply("Привет!"));
 bot.hears("/random", (ctx) =>
 {
 	let randomId = Math.floor(Math.random() * 300);
 	ctx.reply(`https://picsum.photos/id/${randomId}/400/600/`);
 });
+
 bot.command("weather", (ctx) =>
 {
 	const location = "Vladikavkaz";
 	getWeather(location, ctx);
 });
 
-bot.command('fact', async (ctx) => {
-  try {
-    const fact = await getInterestingFact();
-    ctx.reply(fact);
-  } catch (error) {
-    console.error(error);
-    ctx.reply('Произошла ошибка, попробуйте еще раз позднее');
-  }
+bot.command("fact", async (ctx) =>
+{
+	try
+	{
+		const fact = await getInterestingFact();
+		ctx.reply(fact);
+	}
+	catch (error)
+	{
+		console.error(error);
+		ctx.reply("Произошла ошибка, попробуйте еще раз позднее");
+	}
 });
 
-bot.command('gif', async (ctx) => {
-  try {
-    const query = ctx.message.text.split(' ').slice(1).join(' ');
-    const gifUrl = await getRandomGif(query);
-
-    ctx.replyWithAnimation({ url: gifUrl });
-  } catch (error) {
-    console.error(error);
-    ctx.reply('Произошла ошибка, попробуйте еще раз позднее');
-  }
+bot.command("gif", async (ctx) =>
+{
+	try
+	{
+		const query = ctx.message.text.split(" ").slice(1).join(" ");
+		const gifUrl = await getRandomGif(query);
+		
+		ctx.replyWithAnimation({url: gifUrl});
+	}
+	catch (error)
+	{
+		console.error(error);
+		ctx.reply("Произошла ошибка, попробуйте еще раз позднее");
+	}
 });
 
 bot.command("quote", async (ctx) =>
@@ -58,7 +69,7 @@ bot.command("quote", async (ctx) =>
 		console.log(quote);
 		
 		ctx.reply(quote.quoteText);
-		if(quote.quoteAuthor)
+		if (quote.quoteAuthor)
 		{
 			ctx.reply(quote.quoteAuthor);
 		}
@@ -87,8 +98,8 @@ bot.on("message", (ctx) =>
 });
 
 
-const rubai = ["рубай", "рубай.", "рубай,", "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.", "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"];
-const sirena = ["@news_sirena", "@sirenanews_bot"];
+// const rubai = ["рубай", "рубай.", "рубай,", "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.", "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"];
+// const sirena = ["@news_sirena", "@sirenanews_bot"];
 
 
 // function to send the New Year's greeting
