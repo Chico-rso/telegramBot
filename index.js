@@ -1,14 +1,25 @@
-const { Telegraf } = require("telegraf");
-const axios = require("axios");
-const bot = new Telegraf("5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64");
 // 5349322670:AAGgL_PuGYb8T6CHxy_ZqY4BlMOnn8WaC64
 //5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk - тестовый бот
 //5970563248:AAEM-Exx2s7Et1ifpZEqGQf6DyiJAnzA7sM - strigoiMusicBot
 // 315793010 - id моего аккаунта
 
-const API_KEY = "a1a5763c6ce3ed3ae0df7930f0d187b2";
+const {Telegraf} = require("telegraf");
+const axios = require("axios");
+const {Configuration, OpenAIApi} = require("openai");
 
-bot.start((ctx) => ctx.reply("Привет!"));
+const bot = new Telegraf("5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk");
+const OPENAI_API_KEY = "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";
+const WETHER_API_KEY = "a1a5763c6ce3ed3ae0df7930f0d187b2";
+// Запросить ответ от ChatGPT
+
+const configuration = new Configuration({
+	apiKey: OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
+
+bot.start((ctx) => ctx.reply("Привет! Я ChatGPT бот. Что бы вы мне ни написали, я постараюсь ответить на ваше сообщение."));
+// Обработчик сообщений
 bot.hears("/random", (ctx) =>
 {
 	let randomId = Math.floor(Math.random() * 300);
@@ -32,15 +43,14 @@ bot.on("message", (ctx) =>
 	sendYou(ctx);
 	checkMessageDziba(ctx);
 	checkMessageStrigoi(ctx);
+	answerChatGpt(ctx);
 });
 
 const strigoi = ["strigoi", "стригой", "стриг", "strig", "стригой", "sстригой", "сtригой", "stригой", "cTrigoi", "cтригой", "стrигой", "стригoй", "стрNгой", "стриrой"];
-const rubai = ['рубай', 'рубай.', 'рубай,', "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.", "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"];
+const rubai = ["рубай", "рубай.", "рубай,", "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.", "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"];
 const arrXu = ["иди на хуй", "иди нахуй", "пошел на хуй", "пошел нахуй", "нахуй иди", "на хуй иди", "пошёл нахуй", "пошёл на хуй", "нахуй пошёл", "на хуй пошёл", "хуй"];
-const sirena = ['@news_sirena', '@sirenanews_bot'];
-const dziba = ['дзыб','дзеб',"цепан","ципан","дзиб","ципа","Дзэб"]
-
-
+const sirena = ["@news_sirena", "@sirenanews_bot"];
+const dziba = ["дзыб", "дзеб", "цепан", "ципан", "дзиб", "ципа", "Дзэб"];
 
 
 // function to send the New Year's greeting
@@ -48,6 +58,28 @@ async function sendMessage()
 {
 	await bot.telegram.sendMessage(-1001695052259, "О, с новым годом пацаны!!! 🎉🎊🎈");
 }
+
+async function answerChatGpt(ctx)
+{
+	// Получить текст сообщения
+	const user_input = ctx.message.text;
+	
+	
+	const response = await openai.createCompletion({
+		model: "text-davinci-003",
+		prompt: user_input,
+		temperature: 0.5,
+		max_tokens: 300,
+		top_p: 1.0,
+		frequency_penalty: 0.5,
+		presence_penalty: 0.0,
+		stop: ["You:"],
+	});
+	
+	// Отправить ответ обратно в Telegram
+	ctx.reply(response.data.choices[0].text);
+}
+
 // Schedule the sendMessage function to run every day at 00:00
 const now = new Date();
 
@@ -61,10 +93,9 @@ setTimeout(() =>
 }, timeUntilMidnight);
 
 
-
 async function getWeather(location, ctx)
 {
-	const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}`;
+	const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${WETHER_API_KEY}`;
 	try
 	{
 		const response = await axios.get(url);
@@ -87,7 +118,7 @@ async function getWeather(location, ctx)
 						*Timezone:* ${data.timezone / 3600} hours
 						*Country:* ${data.sys.country}
 						*City:* ${data.name}
-						`, { parse_mode: "Markdown" });
+						`, {parse_mode: "Markdown"});
 	}
 	catch (error)
 	{
@@ -98,11 +129,11 @@ async function getWeather(location, ctx)
 async function sendYou(ctx)
 {
 	let message = ctx.message.text;
-	if(!message) return;
+	if (!message) return;
 	let newMessage = message.replace(/[.,-/#!$%^&*;:{}=-_`~()\s]/g, "").toLowerCase();
 	if (arrXu.includes(newMessage))
 	{
-		await ctx.reply("сам иди на хуй", { reply_to_message_id: ctx.message.message_id });
+		await ctx.reply("хуйнюс", {reply_to_message_id: ctx.message.message_id});
 	}
 }
 
