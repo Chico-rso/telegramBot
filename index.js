@@ -3,23 +3,11 @@
 //5970563248:AAEM-Exx2s7Et1ifpZEqGQf6DyiJAnzA7sM - strigoiMusicBot
 // 315793010 - id моего аккаунта
 
-const {Telegraf} = require("telegraf");
-const axios = require("axios");
-const {Configuration, OpenAIApi} = require("openai");
+import {getWeather, checkMessageDziba, checkMessageStrigoi, answerChatGpt, sendYou, getMotivationalQuote} from "./modules/index.js";
+import {Telegraf} from "telegraf";
 
 const bot = new Telegraf("5609369539:AAFVT7jURIg_gpFTAQA5kZ8rZ6qlSz8aGbk");
-const OPENAI_API_KEY = "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";
-const WETHER_API_KEY = "a1a5763c6ce3ed3ae0df7930f0d187b2";
-// Запросить ответ от ChatGPT
-
-const configuration = new Configuration({
-	apiKey: OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
-
-
-bot.start((ctx) => ctx.reply("Привет! Я ChatGPT бот. Что бы вы мне ни написали, я постараюсь ответить на ваше сообщение."));
-// Обработчик сообщений
+bot.start((ctx) => ctx.reply("Привет!"));
 bot.hears("/random", (ctx) =>
 {
 	let randomId = Math.floor(Math.random() * 300);
@@ -31,6 +19,22 @@ bot.command("weather", (ctx) =>
 	getWeather(location, ctx);
 });
 
+bot.command("quote", async (ctx) =>
+{
+	try
+	{
+		console.log("Trying to get a quote");
+		
+		const quote = await getMotivationalQuote();
+		ctx.reply(quote);
+	}
+	catch (error)
+	{
+		console.error(error);
+		ctx.reply("Произошла ошибка, попробуйте еще раз позднее");
+	}
+});
+
 bot.on("sticker", (ctx) =>
 {
 	if (ctx.message.sticker.emoji === "👍")
@@ -38,19 +42,18 @@ bot.on("sticker", (ctx) =>
 		ctx.reply("👌");
 	}
 });
+// Обработчик сообщений
 bot.on("message", (ctx) =>
 {
 	sendYou(ctx);
 	checkMessageDziba(ctx);
 	checkMessageStrigoi(ctx);
-	answerChatGpt(ctx);
+	// answerChatGpt(ctx);
 });
 
-const strigoi = ["strigoi", "стригой", "стриг", "strig", "стригой", "sстригой", "сtригой", "stригой", "cTrigoi", "cтригой", "стrигой", "стригoй", "стрNгой", "стриrой"];
+
 const rubai = ["рубай", "рубай.", "рубай,", "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.", "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"];
-const arrXu = ["иди на хуй", "иди нахуй", "пошел на хуй", "пошел нахуй", "нахуй иди", "на хуй иди", "пошёл нахуй", "пошёл на хуй", "нахуй пошёл", "на хуй пошёл", "хуй"];
 const sirena = ["@news_sirena", "@sirenanews_bot"];
-const dziba = ["дзыб", "дзеб", "цепан", "ципан", "дзиб", "ципа", "Дзэб"];
 
 
 // function to send the New Year's greeting
@@ -59,116 +62,15 @@ async function sendMessage()
 	await bot.telegram.sendMessage(-1001695052259, "О, с новым годом пацаны!!! 🎉🎊🎈");
 }
 
-async function answerChatGpt(ctx)
-{
-	// Получить текст сообщения
-	const user_input = ctx.message.text;
-	
-	
-	const response = await openai.createCompletion({
-		model: "text-davinci-003",
-		prompt: user_input,
-		temperature: 0.5,
-		max_tokens: 300,
-		top_p: 1.0,
-		frequency_penalty: 0.5,
-		presence_penalty: 0.0,
-		stop: ["You:"],
-	});
-	
-	// Отправить ответ обратно в Telegram
-	ctx.reply(response.data.choices[0].text);
-}
-
 // Schedule the sendMessage function to run every day at 00:00
 const now = new Date();
-
 // Calculate the time until midnight
 const timeUntilMidnight = (24 - now.getHours()) * 60 * 60 * 1000 + (60 - now.getMinutes()) * 60 * 1000 + (60 - now.getSeconds()) * 1000;
-
 // Schedule the sendMessage function to run at midnight
 setTimeout(() =>
 {
 	setInterval(sendMessage, 24 * 60 * 60 * 1000);
 }, timeUntilMidnight);
-
-
-async function getWeather(location, ctx)
-{
-	const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${WETHER_API_KEY}`;
-	try
-	{
-		const response = await axios.get(url);
-		const data = response.data;
-		// get the temperature and forecast
-		let temperature = data.main.temp;
-		temperature = Math.round(temperature - 273.15);
-		const forecast = data.weather[0].description;
-		// send the forecast to the user
-		ctx.reply(`🌤️ *The weather in ${location}*:
-						*Forecast:* ${forecast}
-						*Temperature:* ${temperature}°C
-						*Humidity:* ${data.main.humidity}%
-						*Wind speed:* ${data.wind.speed} m/s
-						*Cloudiness:* ${data.clouds.all}%
-						*Pressure:* ${data.main.pressure} hPa
-						*Coordinates:* ${data.coord.lat}, ${data.coord.lon}
-						*Sunrise:* ${new Date(data.sys.sunrise * 1000).toLocaleTimeString()}
-						*Sunset:* ${new Date(data.sys.sunset * 1000).toLocaleTimeString()}
-						*Timezone:* ${data.timezone / 3600} hours
-						*Country:* ${data.sys.country}
-						*City:* ${data.name}
-						`, {parse_mode: "Markdown"});
-	}
-	catch (error)
-	{
-		console.error(error);
-	}
-}
-
-async function sendYou(ctx)
-{
-	let message = ctx.message.text;
-	if (!message) return;
-	let newMessage = message.replace(/[.,-/#!$%^&*;:{}=-_`~()\s]/g, "").toLowerCase();
-	if (arrXu.includes(newMessage))
-	{
-		await ctx.reply("хуйнюс", {reply_to_message_id: ctx.message.message_id});
-	}
-}
-
-async function checkMessageDziba(ctx)
-{
-	try
-	{
-		let message = ctx.update.message.text;
-		if (!message)
-		{
-			return;
-		}
-		let newMessage = message.replace(/[.,-/#!$%^&*;:{}=-_`~()\s]/g, "").toLowerCase();
-		if (dziba.some((word) => newMessage.includes(word)))
-		{
-			await ctx.replyWithPhoto({source: "dziba.jpg"}, {reply_to_message_id: ctx.message.message_id});
-			await ctx.reply("Военкор Дзэбоев на месте.", {reply_to_message_id: ctx.message.message_id});
-		}
-	}
-	catch (error)
-	{
-		console.error(error);
-	}
-}
-
-async function checkMessageStrigoi(ctx)
-{
-	if (!ctx.update.message || !ctx.update.message.text) return;
-	let message = ctx.update.message.text;
-	let newMessage = message.replace(/[.,-/#!$%^&*;:{}=-_`~()\s]/g, "").toLowerCase();
-	if (strigoi.some((word) => newMessage.includes(word)))
-	{
-		await ctx.replyWithPhoto({source: "strigoi.jpg"}, {reply_to_message_id: ctx.message.message_id});
-	}
-}
 
 
 // async function checkMessageFromUser(ctx)
@@ -202,6 +104,5 @@ async function checkMessageStrigoi(ctx)
 // 		await ctx.telegram.sendAudio(ctx.message.chat.id, {source: "strigoi.mp3"}, {reply_to_message_id: ctx.message.message_id});
 // 	}
 // }
-
 
 bot.launch();
