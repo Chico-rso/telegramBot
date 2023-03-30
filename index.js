@@ -24,7 +24,6 @@ bot.command("quote", async (ctx) =>
 	try
 	{
 		console.log("Trying to get a quote");
-		
 		const quote = await getMotivationalQuote();
 		ctx.reply(quote);
 	}
