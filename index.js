@@ -3,7 +3,7 @@ import {
 	getWeather,
 	checkMessageDziba,
 	checkMessageStrigoi,
-	// answerChatGpt,
+	answerChatGpt,
 	sendYou,
 	getMotivationalQuote,
 	getInterestingFact,
@@ -91,15 +91,111 @@ bot.on("sticker", (ctx) =>
 // Обработчик сообщений
 bot.on("message", (ctx) =>
 {
-	sendYou(ctx);
-	checkMessageDziba(ctx);
-	checkMessageStrigoi(ctx);
-	// answerChatGpt(ctx);
+	// sendYou(ctx);
+	// checkMessageDziba(ctx);
+	// checkMessageStrigoi(ctx);
+	answerChatGpt(ctx);
+});
+
+// Структура данных для хранения статей
+let articles = [];
+
+// Функция для создания новой статьи
+function createArticle(title, content)
+{
+	const newArticle = {title, content};
+	articles.push(newArticle);
+	return newArticle;
+}
+
+// Функция для редактирования существующей статьи
+function editArticle(index, newTitle, newContent)
+{
+	if (index >= 0 && index < articles.length)
+	{
+		articles[index].title = newTitle;
+		articles[index].content = newContent;
+		return true;
+	}
+	return false;
+}
+
+// Функция для проверки, является ли пользователь администратором
+async function isAdmin(ctx)
+{
+	const chatMember = await ctx.getChatMember(ctx.from.id);
+	return chatMember.status === "creator" || chatMember.status === "administrator";
+}
+
+// Обработка команды /start
+bot.start((ctx) =>
+{
+	ctx.reply("Добро пожаловать! Введите /create для создания статьи или /edit для редактирования статьи.");
+});
+
+// Обработка команды /create
+bot.command("create", async (ctx) =>
+{
+	if (await isAdmin(ctx))
+	{
+		ctx.reply("Введите название статьи:");
+		bot.on("text", (ctx) =>
+		{
+			const title = ctx.message.text;
+			ctx.reply("Введите содержание статьи:");
+			bot.on("text", (ctx) =>
+			{
+				const content = ctx.message.text;
+				createArticle(title, content);
+				ctx.reply("Статья успешно создана!");
+			});
+		});
+	}
+	else
+	{
+		ctx.reply("Извините, только администратор может создавать статьи.");
+	}
+});
+
+// Обработка команды /edit
+bot.command("edit", async (ctx) =>
+{
+	if (await isAdmin(ctx))
+	{
+		ctx.reply("Введите индекс статьи для редактирования:");
+		bot.on("text", (ctx) =>
+		{
+			const index = parseInt(ctx.message.text);
+			ctx.reply("Введите новое название статьи:");
+			bot.on("text", (ctx) =>
+			{
+				const newTitle = ctx.message.text;
+				ctx.reply("Введите новое содержание статьи:");
+				bot.on("text", (ctx) =>
+				{
+					const newContent = ctx.message.text;
+					if (editArticle(index, newTitle, newContent))
+					{
+						ctx.reply("Статья успешно отредактирована!");
+					}
+					else
+					{
+						ctx.reply("Ошибка: неверный индекс статьи.");
+					}
+				});
+			});
+		});
+	}
+	else
+	{
+		ctx.reply("Извините, только администратор может редактировать статьи.");
+	}
 });
 
 
-// const rubai = ["рубай", "рубай.", "рубай,", "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.", "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"];
-// const sirena = ["@news_sirena", "@sirenanews_bot"];
+// const rubai = ["рубай", "рубай.", "рубай,", "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.",
+// "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"]; const sirena = ["@news_sirena",
+// "@sirenanews_bot"];
 
 
 // function to send the New Year's greeting
@@ -147,8 +243,7 @@ setTimeout(() =>
 // 	const message = ctx.update.message;
 // 	if (message.text && rubai.some((word) => message.text.includes(word)))
 // 	{
-// 		await ctx.telegram.sendAudio(ctx.message.chat.id, {source: "strigoi.mp3"}, {reply_to_message_id: ctx.message.message_id});
-// 	}
-// }
+// 		await ctx.telegram.sendAudio(ctx.message.chat.id, {source: "strigoi.mp3"}, {reply_to_message_id:
+// ctx.message.message_id}); } }
 
 bot.launch();
