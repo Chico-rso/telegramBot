@@ -3,11 +3,12 @@ import {
 	getWeather,
 	checkMessageDziba,
 	checkMessageStrigoi,
-	answerChatGpt,
+	// answerChatGpt,
 	sendYou,
 	getMotivationalQuote,
 	getInterestingFact,
 	getRandomGif,
+	checkRubai
 } from "./modules/index.js";
 
 import {Telegraf} from "telegraf";
@@ -51,7 +52,6 @@ bot.command("gif", async (ctx) =>
 	{
 		const query = ctx.message.text.split(" ").slice(1).join(" ");
 		const gifUrl = await getRandomGif(query);
-		
 		ctx.replyWithAnimation({url: gifUrl});
 	}
 	catch (error)
@@ -66,8 +66,6 @@ bot.command("quote", async (ctx) =>
 	try
 	{
 		const quote = await getMotivationalQuote();
-		console.log(quote);
-		
 		ctx.reply(quote.quoteText);
 		if (quote.quoteAuthor)
 		{
@@ -91,10 +89,11 @@ bot.on("sticker", (ctx) =>
 // Обработчик сообщений
 bot.on("message", (ctx) =>
 {
-	// sendYou(ctx);
-	// checkMessageDziba(ctx);
-	// checkMessageStrigoi(ctx);
-	answerChatGpt(ctx);
+	sendYou(ctx);
+	checkMessageDziba(ctx);
+	checkMessageStrigoi(ctx);
+	checkRubai(ctx);
+	// answerChatGpt(ctx);
 });
 
 // Структура данных для хранения статей
@@ -193,9 +192,7 @@ bot.command("edit", async (ctx) =>
 });
 
 
-// const rubai = ["рубай", "рубай.", "рубай,", "рубс", "рубенс", "rubai", "rubs", "rubens", "Рубай", "Рубай.",
-// "Рубай,", "Рубс", "Рубенс", "Rubai", "Rubs", "Rubens", "рубчик"]; const sirena = ["@news_sirena",
-// "@sirenanews_bot"];
+// const sirena = ["@news_sirena","@sirenanews_bot"];
 
 
 // function to send the New Year's greeting
@@ -237,13 +234,5 @@ setTimeout(() =>
 // 		ctx.reply("This message has been deleted due to spreading fake information. SIRENA BAD!");
 // 	}
 // }
-
-// async function checkRubai(ctx)
-// {
-// 	const message = ctx.update.message;
-// 	if (message.text && rubai.some((word) => message.text.includes(word)))
-// 	{
-// 		await ctx.telegram.sendAudio(ctx.message.chat.id, {source: "strigoi.mp3"}, {reply_to_message_id:
-// ctx.message.message_id}); } }
 
 bot.launch();

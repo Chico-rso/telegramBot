@@ -6,6 +6,7 @@ import {sendYou} from "./sendYou.module.js";
 import {getMotivationalQuote} from "./getMotivationalQuote.module.js";
 import {getInterestingFact} from "./facts.module.js";
 import {getRandomGif} from "./getGifs.module.js";
+import {checkRubai} from "./checkRubai.module.js";
 
 
 export {
@@ -16,7 +17,8 @@ export {
 	sendYou,
 	getMotivationalQuote,
 	getInterestingFact,
-	getRandomGif
+	getRandomGif,
+	checkRubai
 };
 
 
