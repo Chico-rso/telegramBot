@@ -12,7 +12,6 @@ export async function answerChatGpt(ctx)
 	// Получить текст сообщения
 	const user_input = ctx.message.text;
 	
-	
 	const response = await openai.createCompletion({
 		model: "text-davinci-003",
 		prompt: user_input,
