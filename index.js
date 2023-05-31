@@ -9,17 +9,13 @@ import
 	getMotivationalQuote,
 	getInterestingFact,
 	getRandomGif,
-	// searchVideo,
+	searchVideo,
+	searchMusicVK,
 	// checkRubai
 } from "./modules/index.js";
 
 import { Telegraf } from "telegraf";
 import dotenv from "dotenv";
-import { google } from 'googleapis';
-const youtube = google.youtube({
-	version: 'v3',
-	auth: process.env.YOUTUBE_API_KEY, // Замените на ваш API-ключ
-});
 
 
 dotenv.config();
@@ -94,56 +90,48 @@ bot.on("sticker", (ctx) =>
 		ctx.reply("👌");
 	}
 });
+
+
 // Обработчик сообщений
-bot.on("message", (ctx) =>
+bot.on("message", async (ctx) =>
 {
+	const messageText = ctx.message.text;
+	console.log(messageText);
+
+	if (messageText.startsWith('/search_music'))
+	{
+		const query = messageText.replace('/search_music', '').trim();
+		const music = await searchMusicVK(query);
+
+		if (music)
+		{
+			ctx.reply(`Найдена музыка: ${music.title} - ${music.artist}\n${music.url}`);
+		} else
+		{
+			ctx.reply('Музыка не найдена.');
+		}
+	}
+	if (messageText.startsWith('/search_video'))
+	{
+		const query = messageText.replace('/search_video', '').trim();
+		// Здесь вы можете добавить функцию для поиска видео и вызвать ее с переданным запросом
+		const video = await searchVideo(query);
+
+		if (video)
+		{
+			ctx.reply(`Найдено видео: ${video.title}\n${video.url}`);
+		} else
+		{
+			ctx.reply('Видео не найдено.');
+		}
+	}
 	sendYou(ctx);
 	checkMessageDziba(ctx);
 	checkMessageStrigoi(ctx);
-	// searchVideo(ctx);
 	// checkRubai(ctx);
 	// answerChatGpt(ctx);
-	const query = ctx.message.text;
-	const video = searchVideo(query);
-
-	if (video)
-	{
-		ctx.reply(`Найдено видео: ${video.title}\n${video.url}`);
-	} else
-	{
-		ctx.reply('Видео не найдено.');
-	}
 });
 
-async function searchVideo(query)
-{
-	console.log(query);
-	try
-	{
-		const response = await youtube.search.list({
-			part: 'snippet',
-			type: 'video',
-			q: query,
-			maxResults: 1,
-		});
-
-		if (response.data.items.length > 0)
-		{
-			const video = response.data.items[0];
-			return {
-				title: video.snippet.title,
-				url: `https://www.youtube.com/watch?v=${video.id.videoId}`,
-			};
-		} else
-		{
-			return null;
-		}
-	} catch (error)
-	{
-		console.error('Error searching video:', error);
-		return null;
-	}
-}
 
 // const sirena = ["@news_sirena","@sirenanews_bot"];
 
@@ -152,8 +140,6 @@ async function sendMessage()
 {
 	await bot.telegram.sendMessage(-1001695052259, "О, с новым годом пацаны!!! 🎉🎊🎈");
 }
-
-
 // Schedule the sendMessage function to run every day at 00:00
 const now = new Date();
 // Calculate the time until midnight

@@ -1,3 +1,8 @@
+import { google } from 'googleapis';
+const youtube = google.youtube({
+	version: 'v3',
+	auth: process.env.YOUTUBE_API_KEY, // Замените на ваш API-ключ
+});
 export async function searchVideo(ctx)
 {
 	let query = ctx.message.text;

@@ -8,6 +8,7 @@ import {getInterestingFact} from "./facts.module.js";
 import {getRandomGif} from "./getGifs.module.js";
 import {checkRubai} from "./checkRubai.module.js";
 import {searchVideo} from "./youTube.module.js";
+import {searchMusicVK} from "./vkAudioSearch.module.js"
 
 
 export {
@@ -20,7 +21,8 @@ export {
 	getInterestingFact,
 	getRandomGif,
 	checkRubai,
-	searchVideo
+	searchVideo,
+	searchMusicVK
 };
 
 
