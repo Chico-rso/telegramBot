@@ -13,10 +13,9 @@ import
 	searchMusicVK,
 	// checkRubai
 } from "./modules/index.js";
-
-import { Telegraf } from "telegraf";
+import { Telegraf, Markup } from "telegraf";
 import dotenv from "dotenv";
-
+import fetch from "node-fetch";
 
 dotenv.config();
 
@@ -93,27 +92,40 @@ bot.on("sticker", (ctx) =>
 
 
 // Обработчик сообщений
-bot.on("message", async (ctx) =>
+// bot.on("text", async (ctx) =>
+// {
+// 	const messageText = ctx.message.text;
+// 	if (messageText.startsWith('/video'))
+// 	{
+// 		const query = messageText.replace('/video', '').trim();
+// 		// Здесь вы можете добавить функцию для поиска видео и вызвать ее с переданным запросом
+// 		const video = await searchVideo(query);
+
+// 		if (video)
+// 		{
+// 			ctx.reply(`Найдено видео: ${video.title}\n${video.url}`);
+// 		} else
+// 		{
+// 			ctx.reply('Видео не найдено.');
+// 		}
+// 	}
+// 	sendYou(ctx);
+// 	checkMessageDziba(ctx);
+// 	checkMessageStrigoi(ctx);
+// 	// checkRubai(ctx);
+// 	// answerChatGpt(ctx);
+// });
+
+
+
+
+// Обработчик для поиска музыки
+bot.on('text', async (ctx) =>
 {
 	const messageText = ctx.message.text;
-	console.log(messageText);
-
-	if (messageText.startsWith('/search_music'))
+	if (messageText.startsWith('/video'))
 	{
-		const query = messageText.replace('/search_music', '').trim();
-		const music = await searchMusicVK(query);
-
-		if (music)
-		{
-			ctx.reply(`Найдена музыка: ${music.title} - ${music.artist}\n${music.url}`);
-		} else
-		{
-			ctx.reply('Музыка не найдена.');
-		}
-	}
-	if (messageText.startsWith('/search_video'))
-	{
-		const query = messageText.replace('/search_video', '').trim();
+		const query = messageText.replace('/video', '').trim();
 		// Здесь вы можете добавить функцию для поиска видео и вызвать ее с переданным запросом
 		const video = await searchVideo(query);
 
@@ -130,7 +142,36 @@ bot.on("message", async (ctx) =>
 	checkMessageStrigoi(ctx);
 	// checkRubai(ctx);
 	// answerChatGpt(ctx);
+	const keyword = '/msc';
+
+	if (!messageText.includes(keyword))
+	{
+		return;
+	}
+
+	const query = messageText.split(keyword)[1].trim();
+
+	if (!query)
+	{
+		ctx.reply('Пожалуйста, введите ключевые слова для поиска музыки после /msc.');
+		return;
+	}
+
+	ctx.reply('Ищу братка ищу...');
+	const musicResults = await searchMusicVK(query);
+
+	if (!Array.isArray(musicResults) || musicResults.length === 0)
+	{
+		ctx.reply('К сожалению, ничего не найдено. Попробуйте другой запрос.');
+		return;
+	}
+
+	const trackList = musicResults.map((result, index) => `${index + 1}. ${result.artist} - ${result.title}`).join('\n');
+
+	ctx.reply(`Найденные треки>\nВыберите трек из списка:`);
+	ctx.replyWithMarkdown(musicResults.map((result, index) => `${index + 1}. [${result.artist} - ${result.title}](${result.url})`).join('\n'));
 });
+
 
 
 // const sirena = ["@news_sirena","@sirenanews_bot"];

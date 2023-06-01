@@ -3,9 +3,8 @@ const youtube = google.youtube({
 	version: 'v3',
 	auth: process.env.YOUTUBE_API_KEY, // Замените на ваш API-ключ
 });
-export async function searchVideo(ctx)
+export async function searchVideo(query)
 {
-	let query = ctx.message.text;
 	try
 	{
 		const response = await youtube.search.list({
