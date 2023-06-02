@@ -21,7 +21,7 @@ import { getMainMenu, getBackButton } from "./keyboards.js";
 
 dotenv.config();
 
-const testApiKey = process.env.TEST_BOT_API;
+const testApiKey = process.env.MAIN_BOT_API;
 const bot = new Telegraf(testApiKey);
 
 bot.start((ctx) => ctx.reply("Привет!"));
