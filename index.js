@@ -84,7 +84,7 @@ bot.command("quote", async (ctx) =>
 	}
 });
 
-bot.command('/music', async (ctx) =>
+bot.command('/search', async (ctx) =>
 {
 	await ctx.reply('Что искать?', getMainMenu());
 });
@@ -101,6 +101,7 @@ const userStates = {};
 
 bot.on('text', async (ctx) =>
 {
+	console.log(ctx.message.chat);
 	const userId = ctx.from.id;
 	const messageText = ctx.message.text;
 
@@ -146,7 +147,7 @@ bot.on('text', async (ctx) =>
 		{
 			const videoResults = await searchVideo(messageText);
 			// Обработка результатов поиска видео и отправка пользователю
-			if(!videoResults)
+			if(videoResults)
 			{
 				ctx.reply(`Найдено видео: ${videoResults.title}\n${videoResults.url}`);
 			}
