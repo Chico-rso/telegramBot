@@ -11,6 +11,6 @@ export function getMainMenu()
 export function getBackButton()
 {
 	return Markup.keyboard([
-		['Отмена']
+		['Закончить поиск']
 	]).resize().oneTime();
 }

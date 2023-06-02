@@ -101,7 +101,6 @@ const userStates = {};
 
 bot.on('text', async (ctx) =>
 {
-	console.log(ctx.message.chat);
 	const userId = ctx.from.id;
 	const messageText = ctx.message.text;
 
@@ -113,7 +112,7 @@ bot.on('text', async (ctx) =>
 	{
 		userStates[userId] = 'search_video';
 		await ctx.reply('Введите поисковой запрос для видео:', getBackButton());
-	} else if (messageText === 'Отмена')
+	} else if (messageText === 'Закончить поиск')
 	{
 		delete userStates[userId];
 		await ctx.reply('Ушел');
