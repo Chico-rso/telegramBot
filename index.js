@@ -97,51 +97,66 @@ bot.on("sticker", (ctx) =>
 	}
 });
 
+const userStates = {};
 
-// Обработчик cooбщений
 bot.on('text', async (ctx) =>
 {
+	const userId = ctx.from.id;
 	const messageText = ctx.message.text;
+
 	if (messageText === 'Буду искать музыку "🎵"')
 	{
-		await ctx.reply('И что ты хочешь найти засранец:', getBackButton());
-	}
-	else if (messageText === 'Отмена')
+		userStates[userId] = 'search_music';
+		await ctx.reply('Введите поисковой запрос для музыки:', getBackButton());
+	} else if (messageText === 'Буду искать видео "🎬"')
 	{
-		await ctx.reply('Отменено');
-	}
-	else
+		userStates[userId] = 'search_video';
+		await ctx.reply('Введите поисковой запрос для видео:', getBackButton());
+	} else if (messageText === 'Отмена')
 	{
-		// Ожидаем от пользователя поисковый запрос
-		const query = messageText;
+		delete userStates[userId];
+		await ctx.reply('Ушел');
+	} else
+	{
+		const currentState = userStates[userId];
 
-		// Ищем музыку
-		const musicResults = await searchMusicVK(query);
-
-		// Если ничего не найдено
-		if (!Array.isArray(musicResults) || musicResults.length === 0)
+		if (currentState === 'search_music')
 		{
-			ctx.reply('К сожалению, ничего не найдено. Попробуйте другой запрос.');
-			return;
+			const musicResults = await searchMusicVK(messageText);
+			// Обработка результатов поиска музыки и отправка пользователю
+			// Если найдена музыка, отправляем пользователю список найденных треков
+			if (Array.isArray(musicResults) && musicResults.length > 0)
+			{
+				ctx.reply(`Щас постой...`);
+				musicResults.forEach(async (result, index) =>
+				{
+					await ctx.replyWithAudio({
+						url: result.url,
+						title: `${result.artist} - ${result.title}`,
+						performer: result.artist,
+					}, { caption: `${index + 1}. ${result.artist} - ${result.title}` });
+				});
+			}
+			else
+			{
+				ctx.reply('ой что то не нашел нихуя')
+			}
 		}
-
-		// Если найдено, отправляем пользователю список найденных треков
-		ctx.reply(`Найденные треки:\nВыберите трек из списка:`);
-		ctx.replyWithMarkdown(musicResults.map((result, index) => `${index + 1}. [${result.artist} - ${result.title}](${result.url})`).join('\n'));
-	}
-
-	if (messageText.startsWith('/video'))
-	{
-		const query = messageText.replace('/video', '').trim();
-		// Здесь вы можете добавить функцию для поиска видео и вызвать ее с переданным запросом
-		const video = await searchVideo(query);
-
-		if (video)
+		else if (currentState === 'search_video')
 		{
-			ctx.reply(`Найдено видео: ${video.title}\n${video.url}`);
-		} else
+			const videoResults = await searchVideo(messageText);
+			// Обработка результатов поиска видео и отправка пользователю
+			if(!videoResults)
+			{
+				ctx.reply(`Найдено видео: ${videoResults.title}\n${videoResults.url}`);
+			}
+			else
+			{
+				ctx.reply('ой что то не нашел нихуя')
+			}
+		}
+		else
 		{
-			ctx.reply('Видео не найдено.');
 		}
 	}
 	sendYou(ctx);
@@ -150,7 +165,6 @@ bot.on('text', async (ctx) =>
 	// checkRubai(ctx);
 	// answerChatGpt(ctx);
 });
-
 // const sirena = ["@news_sirena","@sirenanews_bot"];
 
 // function to send the New Year's greeting

@@ -8,7 +8,7 @@ export async function searchMusicVK(query)
 {
 	const searchResults = await vk.api.audio.search({
 		q: query,
-		count: 10,
+		count: 1,
 	});
 
 	const musicResults = [];
