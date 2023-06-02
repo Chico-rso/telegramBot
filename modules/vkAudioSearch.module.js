@@ -27,7 +27,6 @@ export async function searchMusicVK(query)
 
 		musicResults.push(musicResult);
 	}
-	console.log(musicResults);
 	return musicResults;
 }
 

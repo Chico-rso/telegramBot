@@ -13,15 +13,17 @@ import
 	searchMusicVK,
 	// checkRubai
 } from "./modules/index.js";
-import { Telegraf, Markup } from "telegraf";
+import { Context, Telegraf, Markup } from "telegraf";
 import dotenv from "dotenv";
-import fetch from "node-fetch";
+import { getMainMenu, getBackButton } from "./keyboards.js";
+
+
 
 dotenv.config();
 
 const testApiKey = process.env.TEST_BOT_API;
-
 const bot = new Telegraf(testApiKey);
+
 bot.start((ctx) => ctx.reply("Привет!"));
 bot.hears("/random", (ctx) =>
 {
@@ -82,6 +84,11 @@ bot.command("quote", async (ctx) =>
 	}
 });
 
+bot.command('/music', async (ctx) =>
+{
+	await ctx.reply('Что искать?', getMainMenu());
+});
+
 bot.on("sticker", (ctx) =>
 {
 	if (ctx.message.sticker.emoji === "👍")
@@ -91,38 +98,38 @@ bot.on("sticker", (ctx) =>
 });
 
 
-// Обработчик сообщений
-// bot.on("text", async (ctx) =>
-// {
-// 	const messageText = ctx.message.text;
-// 	if (messageText.startsWith('/video'))
-// 	{
-// 		const query = messageText.replace('/video', '').trim();
-// 		// Здесь вы можете добавить функцию для поиска видео и вызвать ее с переданным запросом
-// 		const video = await searchVideo(query);
-
-// 		if (video)
-// 		{
-// 			ctx.reply(`Найдено видео: ${video.title}\n${video.url}`);
-// 		} else
-// 		{
-// 			ctx.reply('Видео не найдено.');
-// 		}
-// 	}
-// 	sendYou(ctx);
-// 	checkMessageDziba(ctx);
-// 	checkMessageStrigoi(ctx);
-// 	// checkRubai(ctx);
-// 	// answerChatGpt(ctx);
-// });
-
-
-
-
-// Обработчик для поиска музыки
+// Обработчик cooбщений
 bot.on('text', async (ctx) =>
 {
 	const messageText = ctx.message.text;
+	if (messageText === 'Буду искать музыку "🎵"')
+	{
+		await ctx.reply('И что ты хочешь найти засранец:', getBackButton());
+	}
+	else if (messageText === 'Отмена')
+	{
+		await ctx.reply('Отменено');
+	}
+	else
+	{
+		// Ожидаем от пользователя поисковый запрос
+		const query = messageText;
+
+		// Ищем музыку
+		const musicResults = await searchMusicVK(query);
+
+		// Если ничего не найдено
+		if (!Array.isArray(musicResults) || musicResults.length === 0)
+		{
+			ctx.reply('К сожалению, ничего не найдено. Попробуйте другой запрос.');
+			return;
+		}
+
+		// Если найдено, отправляем пользователю список найденных треков
+		ctx.reply(`Найденные треки:\nВыберите трек из списка:`);
+		ctx.replyWithMarkdown(musicResults.map((result, index) => `${index + 1}. [${result.artist} - ${result.title}](${result.url})`).join('\n'));
+	}
+
 	if (messageText.startsWith('/video'))
 	{
 		const query = messageText.replace('/video', '').trim();
@@ -142,37 +149,7 @@ bot.on('text', async (ctx) =>
 	checkMessageStrigoi(ctx);
 	// checkRubai(ctx);
 	// answerChatGpt(ctx);
-	const keyword = '/msc';
-
-	if (!messageText.includes(keyword))
-	{
-		return;
-	}
-
-	const query = messageText.split(keyword)[1].trim();
-
-	if (!query)
-	{
-		ctx.reply('Пожалуйста, введите ключевые слова для поиска музыки после /msc.');
-		return;
-	}
-
-	ctx.reply('Ищу братка ищу...');
-	const musicResults = await searchMusicVK(query);
-
-	if (!Array.isArray(musicResults) || musicResults.length === 0)
-	{
-		ctx.reply('К сожалению, ничего не найдено. Попробуйте другой запрос.');
-		return;
-	}
-
-	const trackList = musicResults.map((result, index) => `${index + 1}. ${result.artist} - ${result.title}`).join('\n');
-
-	ctx.reply(`Найденные треки>\nВыберите трек из списка:`);
-	ctx.replyWithMarkdown(musicResults.map((result, index) => `${index + 1}. [${result.artist} - ${result.title}](${result.url})`).join('\n'));
 });
-
-
 
 // const sirena = ["@news_sirena","@sirenanews_bot"];
 
