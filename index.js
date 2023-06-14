@@ -2,7 +2,7 @@
 import
 {
 	getWeather,
-	checkMessageDziba,
+	// checkMessageDziba,
 	checkMessageStrigoi,
 	// answerChatGpt,
 	sendYou,
@@ -23,6 +23,10 @@ dotenv.config();
 
 const testApiKey = process.env.MAIN_BOT_API;
 const bot = new Telegraf(testApiKey);
+
+const targetUserId = "315793010"; // Замените на ID пользователя, которого вы хотите отслеживать
+// '2067105006' -rubs
+const imageUrl = 'dziba.jpg';
 
 bot.start((ctx) => ctx.reply("Привет!"));
 bot.hears("/random", (ctx) =>
@@ -97,10 +101,16 @@ bot.on("sticker", (ctx) =>
 	}
 });
 
+
 const userStates = {};
 
 bot.on('text', async (ctx) =>
 {
+	console.log(ctx.update.message.action);
+	if(ctx.update.message.action == 'undefined')
+	{
+		console.log('отправить фото');
+	}
 	const userId = ctx.from.id;
 	const messageText = ctx.message.text;
 
@@ -146,7 +156,7 @@ bot.on('text', async (ctx) =>
 		{
 			const videoResults = await searchVideo(messageText);
 			// Обработка результатов поиска видео и отправка пользователю
-			if(videoResults)
+			if (videoResults)
 			{
 				ctx.reply(`Найдено видео: ${videoResults.title}\n${videoResults.url}`);
 			}
@@ -160,10 +170,20 @@ bot.on('text', async (ctx) =>
 		}
 	}
 	sendYou(ctx);
-	checkMessageDziba(ctx);
+	// checkMessageDziba(ctx);
 	checkMessageStrigoi(ctx);
 	// checkRubai(ctx);
 	// answerChatGpt(ctx);
+});
+
+bot.on('chat_action', (ctx) =>
+{
+	console.log(ctx);
+	if (ctx.update.message.from.id === targetUserId && ctx.update.message.action === 'typing')
+	{
+		console.log(ctx);
+		ctx.replyWithPhoto(imageUrl);
+	}
 });
 // const sirena = ["@news_sirena","@sirenanews_bot"];
 
