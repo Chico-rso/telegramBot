@@ -106,11 +106,6 @@ const userStates = {};
 
 bot.on('text', async (ctx) =>
 {
-	console.log(ctx.update.message.action);
-	if(ctx.update.message.action == 'undefined')
-	{
-		console.log('отправить фото');
-	}
 	const userId = ctx.from.id;
 	const messageText = ctx.message.text;
 
@@ -149,7 +144,7 @@ bot.on('text', async (ctx) =>
 			}
 			else
 			{
-				ctx.reply('ой что то не нашел нихуя')
+				ctx.reply('ой что то нихуя не нашел')
 			}
 		}
 		else if (currentState === 'search_video')
@@ -162,7 +157,7 @@ bot.on('text', async (ctx) =>
 			}
 			else
 			{
-				ctx.reply('ой что то не нашел нихуя')
+				ctx.reply('ой что то нихуя не нашел')
 			}
 		}
 		else
