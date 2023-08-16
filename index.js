@@ -133,14 +133,15 @@ bot.on('text', async (ctx) =>
 			if (Array.isArray(musicResults) && musicResults.length > 0)
 			{
 				ctx.reply(`Щас постой...`);
-				musicResults.forEach(async (result, index) =>
+				for (const result of musicResults)
 				{
+					const index = musicResults.indexOf(result);
 					await ctx.replyWithAudio({
 						url: result.url,
 						title: `${result.artist} - ${result.title}`,
 						performer: result.artist,
 					}, { caption: `${index + 1}. ${result.artist} - ${result.title}` });
-				});
+				}
 			}
 			else
 			{
