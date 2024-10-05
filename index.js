@@ -112,7 +112,7 @@ bot.on('text', async (ctx) => {
         await ctx.reply('Введите поисковой запрос для видео:', getBackButton());
     } else if (messageText === 'Закончить поиск') {
         await redis.del(`user_state:${ userId }`);
-        await ctx.reply('Ушел');
+        await ctx.reply('Ушел', Markup.removeKeyboard());
     } else {
         if (currentState === 'search_music') {
             const musicResults = await searchMusicVK(messageText);
