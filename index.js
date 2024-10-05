@@ -101,49 +101,47 @@ bot.on('text', async (ctx) => {
     const userId = ctx.from.id;
     const messageText = ctx.message.text;
     
-    // Получаем текущее состояние пользователя
-    const currentState = await redis.get(`user_state:${ userId }`);
-    
     if (messageText === 'Буду искать музыку "🎵"') {
-        await redis.set(`user_state:${ userId }`, 'search_music');
+        userStates[userId] = 'search_music';
         await ctx.reply('Введите поисковой запрос для музыки:', getBackButton());
     } else if (messageText === 'Буду искать видео "🎬"') {
-        await redis.set(`user_state:${ userId }`, 'search_video');
+        userStates[userId] = 'search_video';
         await ctx.reply('Введите поисковой запрос для видео:', getBackButton());
     } else if (messageText === 'Закончить поиск') {
-        await redis.del(`user_state:${ userId }`);
-        await ctx.reply('Ушел');
+        delete userStates[userId];
+        await ctx.reply('Поиск завершен', Markup.removeKeyboard());  // Удаляем кнопки
     } else {
+        const currentState = userStates[userId];
+        
         if (currentState === 'search_music') {
             const musicResults = await searchMusicVK(messageText);
-            
             if (Array.isArray(musicResults) && musicResults.length > 0) {
-                await ctx.reply('Щас постой...');
-                await Promise.all(musicResults.map((result, index) => {
-                    return ctx.replyWithAudio({
+                await ctx.reply('Найдено:', Markup.removeKeyboard());  // Убираем кнопки перед отправкой результата
+                for (const result of musicResults) {
+                    const index = musicResults.indexOf(result);
+                    await ctx.replyWithAudio({
                         url: result.url,
                         title: `${ result.artist } - ${ result.title }`,
                         performer: result.artist,
                     }, {caption: `${ index + 1 }. ${ result.artist } - ${ result.title }`});
-                }));
+                }
             } else {
-                ctx.reply('ой что-то нихуя не нашел');
+                ctx.reply('Ничего не найдено', Markup.removeKeyboard());  // Убираем кнопки если ничего не найдено
             }
         } else if (currentState === 'search_video') {
             const videoResults = await searchVideo(messageText);
-            
             if (videoResults) {
-                ctx.reply(`Найдено видео: ${ videoResults.title }\n${ videoResults.url }`);
+                ctx.reply(`Найдено видео: ${ videoResults.title }\n${ videoResults.url }`, Markup.removeKeyboard());
             } else {
-                ctx.reply('ой что-то нихуя не нашел');
+                ctx.reply('Ничего не найдено', Markup.removeKeyboard());
             }
         }
     }
-    
     // Выполнение пользовательских функций
     sendYou(ctx);
     checkMessageStrigoi(ctx);
 });
+
 
 // Ответ на действия пользователя в чате
 bot.on('chat_action', (ctx) => {
@@ -182,10 +180,10 @@ bot.command('help', (ctx) => {
   `);
     
     // sendYou(ctx);
-	// // checkMessageDziba(ctx);
-	// checkMessageStrigoi(ctx);
-	// // checkRubai(ctx);
-	// // answerChatGpt(ctx);
+    // // checkMessageDziba(ctx);
+    // checkMessageStrigoi(ctx);
+    // // checkRubai(ctx);
+    // // answerChatGpt(ctx);
 });
 
 bot.launch();
