@@ -147,7 +147,7 @@ bot.on('text', async (ctx) => {
 
 // Ответ на действия пользователя в чате
 bot.on('chat_action', (ctx) => {
-    if (ctx.update.message?.from?.id === targetUserId && ctx.update.message?.action === 'typing') {
+    if (ctx.update.message.from.id === targetUserId && ctx.update.message.action === 'typing') {
         ctx.replyWithPhoto(imageUrl);
     }
 });
